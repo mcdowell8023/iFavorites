@@ -4,4 +4,4 @@
 > 决定做个长期收藏的项目记录
 
 - [websocket 封装类](./function/webSocket/readme.md)
-- [event2Android 封装类](./function/event2Android/readme.md)
+- [event2Android 封装类](./function/event2Android)
