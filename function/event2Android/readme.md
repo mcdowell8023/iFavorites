@@ -1,8 +1,9 @@
 # event2Android
 
-> 移动端 touche 事件套 ，按照 安卓 事件指令要求 ，进行 计数，拼接 凑参
-> 这个函数是在 公司项目中 需要 点击 移动端 web 上的视频 进行 手机操控的需求 【云手机】
-> 这是一个 可能 一般人用不到的 函数
+> 移动端 touche 事件组 ，按照 安卓 事件指令要求 ，进行 计数、拼接
+
+- 这个函数是在【云手机广告】项目中的需要: 点击 移动端 web 上的视频画面， 发送安卓事件参数给远端安卓手机，从而 操控安卓手机的需求
+- 这是一个 可能 一般人用不到的 函数
 
 ## 使用
 
@@ -14,10 +15,10 @@ vue 为例：
     this.event2Android= new Event2Android()
     // 注册 接收事件
     const toucheBack = {
-      "getStartTouches": data => {/* do somthing */},
-      "getMoveTouches": data => {/* do somthing */},
-      "getEndTouches": data => {/* do somthing */},
-      "getCancelTouches": data => {/* do somthing */},
+      "getStartTouches": data => {conso.log(data)/* do something */},
+      "getMoveTouches": data => {/* do something */},
+      "getEndTouches": data => {/* do something */},
+      "getCancelTouches": data => {/* do something */},
     }
     Object.key(toucheBack).map(name=>{
       this.event2Android.on(name,toucheBack[name]);
