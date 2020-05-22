@@ -2,7 +2,7 @@
  * @Author: mcdowell
  * @Date: 2020-05-14 19:46:14
  * @LastEditors: mcdowell
- * @LastEditTime: 2020-05-19 19:03:26
+ * @LastEditTime: 2020-05-22 20:07:06
  */
 import { stringify } from 'qs'
 const { EventEmitter } = require('events')
@@ -313,14 +313,24 @@ class WebSocketSync extends EventEmitter {
       })
     })
   }
-  // 用于 获取 sendPool key
+
+  /**
+   * @description: 用于 获取 sendPool key
+   * @param { object } sign 用于匹配 message 返回消息 reject 进行 异步
+   * @return: string
+   */
   getSendKey = (sign) => {
     const sendKey = this.sendSyncKeys.reduce((count, name) => {
       return count + '_' + sign[name]
     }, '')
     return sendKey
   }
-  // sendSync 过期事件 清理
+
+  /**
+   * @description: sendSync 过期事件 清理
+   * @param { number } timeout 超时时间
+   * @return:
+   */
   setSendKeyTimeout = (timeout = 20000) => {
     const timeoutPoolKeys = Object.keys(this.sendPool)
     console.log(timeoutPoolKeys, 'timeoutPoolKeys')
@@ -347,15 +357,20 @@ class WebSocketSync extends EventEmitter {
    ** close start
    */
 
-  // 关闭
+  /**
+   * @description: 关闭 websocket
+   * @param { number } code 错误码 ： code: 1000 || >3000 < 4999      defult: code: 3100
+   * @param { string } reason  reason: 这个UTF-8编码的字符串不能超过123个字节。 否则会关闭失败  defult： reason: "主动断开"
+   * @param { function } syncBack 同步方式回调 预留函数
+   * @param { function } reject
+   * @return:
+   */
   close = ({
     code = DEFAULT_VALUE.CLOSE_CODE,
     reason = DEFAULT_VALUE.CLOSE_REASON,
     syncBack = null,
     reject,
   } = {}) => {
-    // code: 1000 || >3000 < 4999  reason: 这个UTF-8编码的字符串不能超过123个字节。  否则会关闭失败
-    // defult: code: 3100 reason: "主动断开"
     if (code > 3000 && code < 4999 && reason.length < 123) {
       this.socket.close(code, reason)
       syncBack && syncBack()
@@ -365,7 +380,13 @@ class WebSocketSync extends EventEmitter {
       reject && reject(error)
     }
   }
-  // 同步方式
+  //
+  /**
+   * @description: 同步方式 关闭 websocket
+   * @param { number } code 错误码 ： code: 1000 || >3000 < 4999      defult: code: 3100
+   * @param { string } reason  reason: 这个UTF-8编码的字符串不能超过123个字节。 否则会关闭失败  defult： reason: "主动断开"
+   * @return: Promise
+   */
   closeSync = ({
     code = DEFAULT_VALUE.CLOSE_CODE,
     reason = DEFAULT_VALUE.CLOSE_REASON,
