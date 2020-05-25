@@ -1,0 +1,37 @@
+<!--
+ * @Author: mcdowell
+ * @Date: 2020-05-23 06:44:11
+ * @LastEditors: mcdowell
+ * @LastEditTime: 2020-05-23 06:50:48
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    /* 使用 background-image 模拟 border */
+    .background-border {
+      background-image: linear-gradient(to right, #bcbcbc 0%, #bcbcbc 60%, transparent 60%);
+      background-size: 6px 1px;
+      background-repeat: repeat-x;
+      background-position: bottom;
+    }
+
+    /* 通过 height 和 line-height配合 调整 与 底边的距离 */
+    
+    h1 {
+      height: 40px;
+      line-height: 10px;
+    }
+  </style>
+</head>
+<h1 class="background-border">background-border:使用 background-image 模拟 border</h1>
+
+<body>
+
+</body>
+
+</html>
