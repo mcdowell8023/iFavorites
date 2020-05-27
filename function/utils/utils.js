@@ -1,18 +1,34 @@
 /*
  * @Author: mcdowell
- * @Date: 2020-05-20 19:16:23
- * @LastEditors: mcdowell
- * @LastEditTime: 2020-05-21 17:19:07
- */
-/*
- * @Author: mcdowell
  * @Date: 2019-09-16 20:12:32
  * @LastEditors: mcdowell
- * @LastEditTime: 2020-05-20 17:07:12
+ * @LastEditTime: 2020-05-27 13:28:54
  */
-/* eslint-disable consistent-return */
-/* eslint-disable no-plusplus */
-/* eslint-disable no-restricted-syntax */
+
+/**
+ * @description: 检测类型 代替  typeof
+ * @param { any } obj 要检测类型
+ * @param { string } type 类型名词字符串
+ * @return: 不传值，默认返回 'undefined'
+ */
+export function typeOf(obj, type) {
+  let _class = ''
+  // 兼容 ie8 undefined null 的表现
+  if (obj === void 0) {
+    // 判断 undefined
+    _class = 'undefined'
+  } else if (obj === null) {
+    // 判断 null
+    _class = 'null'
+  } else {
+    // Object.prototype.toString.call 截取类型， 转为小写
+    _class = Object.prototype.toString.call(obj).slice(8, -1).toLowerCase()
+  }
+  if (typeof type === 'string' && !type) {
+    return type.toLowerCase() === _class
+  }
+  return _class
+}
 
 /**
  * @description: 补0 操作
