@@ -1,0 +1,59 @@
+<!--
+ * @Author: mcdowell
+ * @Date: 2020-05-28 11:43:12
+ * @LastEditors: mcdowell
+ * @LastEditTime: 2020-05-28 12:03:42
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>边框绘制三角形</title>
+  <style>
+    .message {
+      margin-left: 50px;
+      display: inline-block;
+      border: 1px solid;
+      padding: 20px;
+      border-radius: 5px;
+      background: red;
+      position: relative;
+    }
+
+    .message:after {
+      content: '';
+      display: block;
+      border: 30px solid red;
+      border-left: 20px transparent;
+      border-bottom: 20px solid transparent;
+      border-top: 20px solid transparent;
+      position: absolute;
+      left: -30px;
+      top: 10px;
+    }
+
+    .message-left:after {
+      border: 30px solid red;
+      border-bottom: 20px solid transparent;
+      border-top: 20px solid transparent;
+      border-right: 20px transparent;
+      right: -30px;
+      left: inherit;
+      top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="message">
+    这个示例要做个消息框
+  </div>
+
+  <div class="message message-left">
+    这个示例要做个消息框
+  </div>
+</body>
+
+</html>
