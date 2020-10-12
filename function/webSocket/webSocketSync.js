@@ -2,7 +2,7 @@
  * @Author: mcdowell
  * @Date: 2020-05-14 19:46:14
  * @LastEditors: mcdowell
- * @LastEditTime: 2020-05-22 20:07:06
+ * @LastEditTime: 2020-10-13 02:34:17
  */
 import { stringify } from 'qs'
 const { EventEmitter } = require('events')
@@ -22,7 +22,7 @@ const DEFAULT_VALUE = {
   // 默认 2000 ms 发送一次心跳
   HEART_TIMEOUT: 2000,
   // 默认 在心跳模式下， 在send 发送 会暂停一次心跳， 发送结束后，会继续 心跳 【 修改其他任意值 默认 将不会采取这种方式 】
-  HEART_TYPE: 'await', // 'always', //
+  HEART_TYPE: 'always', // 'await', //
   // 默认 关闭 函数 下的code 及 断开说明 【code\reason 限制如下】
   // code: 1000 || >3000 < 4999  reason: 这个UTF-8编码的字符串不能超过123个字节。  否则会关闭失败
   CLOSE_CODE: 3100,
@@ -137,11 +137,14 @@ class WebSocketSync extends EventEmitter {
     this.messageListen()
 
     // Listen for closed
-    this.socket.onclose = (event) =>
+    this.socket.onclose = (event) => {
+      console.log('disconnected-- 断开连接')
       this.onCommonSync({ name: 'disconnected', data: event })
+    }
 
     // Listen for error
     this.socket.onerror = (event) => {
+      console.log('error-- 出错断开')
       this.commit({ active: 'error', data: event, reject })
       // 断开 重连
       this.reConnectState = 'open'
@@ -313,24 +316,14 @@ class WebSocketSync extends EventEmitter {
       })
     })
   }
-
-  /**
-   * @description: 用于 获取 sendPool key
-   * @param { object } sign 用于匹配 message 返回消息 reject 进行 异步
-   * @return: string
-   */
+  // 用于 获取 sendPool key
   getSendKey = (sign) => {
     const sendKey = this.sendSyncKeys.reduce((count, name) => {
       return count + '_' + sign[name]
     }, '')
     return sendKey
   }
-
-  /**
-   * @description: sendSync 过期事件 清理
-   * @param { number } timeout 超时时间
-   * @return:
-   */
+  // sendSync 过期事件 清理
   setSendKeyTimeout = (timeout = 20000) => {
     const timeoutPoolKeys = Object.keys(this.sendPool)
     console.log(timeoutPoolKeys, 'timeoutPoolKeys')
@@ -357,20 +350,15 @@ class WebSocketSync extends EventEmitter {
    ** close start
    */
 
-  /**
-   * @description: 关闭 websocket
-   * @param { number } code 错误码 ： code: 1000 || >3000 < 4999      defult: code: 3100
-   * @param { string } reason  reason: 这个UTF-8编码的字符串不能超过123个字节。 否则会关闭失败  defult： reason: "主动断开"
-   * @param { function } syncBack 同步方式回调 预留函数
-   * @param { function } reject
-   * @return:
-   */
+  // 关闭
   close = ({
     code = DEFAULT_VALUE.CLOSE_CODE,
     reason = DEFAULT_VALUE.CLOSE_REASON,
     syncBack = null,
     reject,
   } = {}) => {
+    // code: 1000 || >3000 < 4999  reason: 这个UTF-8编码的字符串不能超过123个字节。  否则会关闭失败
+    // defult: code: 3100 reason: "主动断开"
     if (code > 3000 && code < 4999 && reason.length < 123) {
       this.socket.close(code, reason)
       syncBack && syncBack()
@@ -380,13 +368,7 @@ class WebSocketSync extends EventEmitter {
       reject && reject(error)
     }
   }
-  //
-  /**
-   * @description: 同步方式 关闭 websocket
-   * @param { number } code 错误码 ： code: 1000 || >3000 < 4999      defult: code: 3100
-   * @param { string } reason  reason: 这个UTF-8编码的字符串不能超过123个字节。 否则会关闭失败  defult： reason: "主动断开"
-   * @return: Promise
-   */
+  // 同步方式
   closeSync = ({
     code = DEFAULT_VALUE.CLOSE_CODE,
     reason = DEFAULT_VALUE.CLOSE_REASON,
