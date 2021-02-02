@@ -1,0 +1,575 @@
+<!--
+ * @Author: mcdowell
+ * @Date: 2021-02-02 11:17:20
+ * @LastEditors: mcdowell
+ * @LastEditTime: 2021-02-02 17:16:09
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>元素居中的N种方法</title>
+  <style>
+    .h2-box {
+      padding: 10px 20px;
+      background-color: #eee;
+    }
+
+    .h3-box {
+      padding: 10px 20px;
+      background-color: #ddd;
+    }
+
+    .h4-box {
+      padding: 10px 20px;
+      background-color: #ccc;
+    }
+
+    .bg-red {
+      background-color: red;
+    }
+
+    .bg-blue {
+      background-color: blue;
+    }
+
+    .bg-green {
+      background-color: green;
+    }
+
+    .bg-yellow {
+      background-color: yellow;
+    }
+
+    .bg-pink {
+      background-color: pink;
+    }
+
+    .width-200 {
+      width: 200px;
+    }
+
+    .width-100 {
+      width: 100px;
+    }
+
+    .box {
+      height: 200px;
+    }
+
+    pre {
+      padding: 20px 10px;
+      border: 1px solid yellow;
+      border-radius: 5px;
+      background: #333;
+      color: #46a1c5;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>元素居中的N种方法</h1>
+  <hr />
+
+  <div class="h2-box">
+    <h2 id="行内元素垂直居中">1. 行内元素垂直居中</h2>
+    <div class="h3-box">
+      <h3>1.1 文本垂直居中(图片同理)</h3>
+
+      <!-- 单行文本垂直居中 -->
+      <div class="h4-box">
+        <h4>1.1.1 单行文本垂直居中</h4>
+        代码示例：
+        <pre>
+          .child {
+            line-height: 50px;
+          }
+        </pre>
+        演示：
+        <style>
+          .child-1 {
+            line-height: 50px;
+          }
+        </style>
+
+        <div class="child-1 bg-red width-200">
+          元素居中的N种方法
+        </div>
+      </div>
+
+      <hr />
+      <!--  多行文本垂直居中 -->
+      <div class="h4-box">
+        <h4>1.1.2 块垂直居中（多行文本） </h4>
+
+        <h5>1.1.2.1 vertical-align</h5>
+        代码示例：
+        <pre>
+        .parent {
+          /* 父级 line-height 必要的，一般和块的高度 相同 */
+          line-height: 200px;
+        }
+        .child {
+          /* 使用 当前行内块 进行剧中 */
+          display: inline-block;
+          vertical-align: middle;
+        }
+        </pre>
+        演示：
+        <style>
+          .parent-1-2 {
+            line-height: 200px;
+          }
+
+          .child-1-2 {
+            display: inline-block;
+            vertical-align: middle;
+            /* 这里有文字的话，这里必须注意：line-height 会继承上层属性 */
+            line-height: 20px;
+
+          }
+        </style>
+        <div class="parent-1-2 width-200 bg-yellow">
+          <div class="child-1-2 bg-red">元素居中的N种方法元素居中的N种方法元素居中的N种方法元素居中的N种方法元素居中的N种方法</div>
+        </div>
+        <hr />
+        <!--  table-cell -->
+        <h5>1.1.2.2 table-cell</h5>
+
+        代码示例：
+        <pre>
+          .parent {
+            /* 父级元素 获得table 特性 */
+            display: table-cell;
+            vertical-align: middle;
+            /* 父级 需要获得 高度 */
+            height: 200px;
+          }
+        </pre>
+        演示：
+        <style>
+          .parent-1-2-2 {
+            /* 父级元素 获得table 特性 */
+            display: table-cell;
+            vertical-align: middle;
+            /* 父级 需要获得 高度 */
+            height: 200px;
+          }
+        </style>
+        <div class="parent-1-2-2 width-200 bg-yellow">
+          <div class="bg-red">元素居中的N种方法元素居中的N种方法元素居中的N种方法元素居中的N种方法元素居中的N种方法</div>
+        </div>
+
+      </div>
+
+
+
+    </div>
+
+    <!-- 第二部分 -->
+    <div class="h2-box">
+      <h2>2. 行内元素水平居中</h2>
+      <div class="h3-box">
+        代码示例：
+        <pre>
+          .parent {
+            text-align: center;
+          }
+
+          .child {
+            /* 行内 或 行内块 均可 */
+            /* display: inline; */
+            display: inline-block
+          }
+        </pre>
+        演示：
+        <style>
+          .parent-2 {
+            text-align: center;
+          }
+
+          .child-2 {
+            /* 行内 或 行内块 均可 */
+            /* display: inline; */
+            display: inline-block
+          }
+        </style>
+        <div class="parent-2 width-200 bg-yellow">
+          <div class="width-100 bg-red child-2">元素居中的N种方法</div>
+        </div>
+      </div>
+    </div>
+    <!-- 第三部分 -->
+    <div class="h2-box">
+      <h2>3. 块元素水平居中</h2>
+      <div class="h3-box">
+        代码示例：
+        <pre>
+          .parent {
+            /* 父级必须是有宽度的 非行内块  */
+          }
+
+          .child{
+            /* 必须是块元素 */
+            margin: 0 auto;
+            /* 宽度是必要的 */
+            width: 100px;
+          }
+          /*
+           盒模型概念：margin+border+width+padidng = 父级 宽度【 块元素 】
+           当宽度固定，maring 左右相等，就会把块挤压到中间部位【两个方向就会平分剩余空间】
+          */
+        </pre>
+        演示：
+        <style>
+          .parent-3 {
+            /* 父级必须是有宽度的 非行内块  */
+          }
+
+          .child-3 {
+            /* 宽度是必要的 */
+            width: 100px;
+            margin: 0 auto;
+          }
+        </style>
+        <div class="parent-3  bg-yellow">
+          <div class=" bg-red child-3">元素居中的N种方法元素居中的N种方法元素居中的N种方法元素居中的N种方法元素居中的N种方法</div>
+        </div>
+      </div>
+    </div>
+    <!-- 第四部分 --- 块级元素垂直居中 -->
+
+    <div class="h2-box">
+      <h2>4. 块元素垂直居中 (writing-mode)</h2>
+      <div class="h3-box">
+        代码示例：
+        <pre>
+          .parent {
+            /* 修改文档流方向 【 文本水平或垂直排布 】为竖版 */
+            writing-mode: vertical-lr;/* vertical-rl 亦可，注意文字方向*/
+            height: 200px;
+          }
+
+          .child{
+            /* 原理同水平方向 margin: 0 auto; */
+            margin: auto 0;
+            /* 高度必要，否则会充满父级 */
+            height: 100px;
+          }
+          /* 
+            通过 writing-mode  修改 文档流 从而使用 `margin: auto 0; ` 可以垂直居中块；
+            注意：
+            1. 修改文档流后，高度会自动充满 需要配合设置高度；宽度与原来文档流高度一样，内容撑开或者设置固定值
+            2. 会导致文字方向发生改变， `text-align`,`line-height`作用方向也会发生对调。
+            3. 有副作用，writing-mode属性的可继承性，会导致该元素下得所有子元素全部流方向全部变为横向。而且此时水平方向不能再使用此方法实现居中了
+          */
+        </pre>
+        演示：
+        <style>
+          .parent-4 {
+            /* 修改文档流方向 【 文本水平或垂直排布 】为竖版 */
+            writing-mode: vertical-lr;
+            height: 200px;
+          }
+
+          .child-4 {
+            /* 原理同水平方向 margin: 0 auto; */
+            margin: auto 0;
+            /* 高度必要，否则会充满父级 */
+            height: 100px;
+          }
+        </style>
+        <div class="parent-4 width-200 bg-yellow">
+          <div class=" bg-red child-4">元素居中的N种方法元素居中的N种方法元素居中的N种方法元素居中的N种方法元素居中的N种方法</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 第五部分 --  -->
+
+    <div class="h2-box">
+      <h2>5.水平垂直居中</h2>
+      <div class="h3-box">
+        <h3>5.1 position水平垂直居中</h3>
+        <div class="h4-box">
+          <h4>5.1.1 position 配合 位移 -- 居中元素宽高固定</h4>
+          代码示例：
+          <pre>
+          .parent {
+            position: relative;
+            width: 300px;
+            height: 300px;
+          }
+
+          .child {
+            width: 150px;
+            height: 150px;
+
+            position: absolute;
+            /* 最普遍的方式：缺点 需要宽高固定 */
+            left: 50%;
+            top: 50%;
+            /* 
+              margin-left: -75px;
+              margin-top: -75px; 
+            */
+            transform: translate(-75px, -75px);
+          }
+          /* 
+          translate固定值 与 margin-left、margin-top 没有本质差别，
+          就是进行反向位移处理
+           */
+        </pre>
+          演示：
+          <style>
+            .parent-5-1-1 {
+              position: relative;
+              width: 300px;
+              height: 300px;
+            }
+
+            .child-5-1-1 {
+              width: 150px;
+              height: 150px;
+
+              position: absolute;
+              /* 最普遍的方式：缺点 需要宽高固定 */
+              left: 50%;
+              top: 50%;
+              /* 
+                margin-left: -75px;
+                margin-top: -75px; 
+              */
+              transform: translate(-75px, -75px);
+            }
+          </style>
+          <div class="parent-5-1-1 width-200 bg-yellow">
+            <div class=" bg-red child-5-1-1">元素居中的N种方法元素居中的N种方法元素居中的N种方法</div>
+          </div>
+
+          <hr />
+          <h4>5.1.2 position 配合 maring进行挤压 -- 居中元素宽高固定</h4>
+          代码示例：
+          <pre>
+          .parent {
+            position: relative;
+            width: 300px;
+            height: 300px;
+          }
+
+          .child {
+            width: 150px;
+            height: 150px;
+
+            position: absolute;
+            
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+          }
+          /* 
+          新方式【 maring进行挤压 】 仍然需要宽高固定 
+          优点：借助 margin挤压方式 不用计算位移值 */
+        </pre>
+          演示：
+          <style>
+            .parent-5-1-2 {
+              position: relative;
+              width: 300px;
+              height: 300px;
+            }
+
+            .child-5-1-2 {
+              width: 150px;
+              height: 150px;
+
+              position: absolute;
+              /* 新方式 仍然需要宽高固定 优点：借助 margin挤压方式 不用计算位移值 */
+              left: 0;
+              top: 0;
+              right: 0;
+              bottom: 0;
+              margin: auto;
+            }
+          </style>
+          <div class="parent-5-1-2 width-200 bg-yellow">
+            <div class=" bg-red child-5-1-2">元素居中的N种方法元素居中的N种方法元素居中的N种方法</div>
+          </div>
+          <hr />
+          <h4>5.1.3 position 配合 `translate (50%,50%)` -- 【居中元素 无固定宽高】</h4>
+          代码示例：
+          <pre>
+          .parent {
+            position: relative;
+            width: 300px;
+            height: 300px;
+          }
+
+          .child {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+          }
+          /* 
+          transform: translate(-50%, -50%); 根据自身实际宽度高度 进行计算的
+          */
+        </pre>
+          演示：
+          <style>
+            .parent-5-1-3 {
+              position: relative;
+              width: 300px;
+              height: 300px;
+            }
+
+            .child-5-1-3 {
+              position: absolute;
+              left: 50%;
+              top: 50%;
+              transform: translate(-50%, -50%);
+            }
+          </style>
+          <div class="parent-5-1-3 bg-yellow">
+            <div class=" bg-red child-5-1-3">元素居中的N种方法元素居中的N种方法元素居中的N种方法</div>
+          </div>
+        </div>
+
+        <hr />
+        <h3>5.2 vertacal-align 和 text-align 结合 </h3>
+        <div class="h4-box">
+          <h4>5.2.1 vertacal-align 和 text-align 结合 --- 固定宽高</h4>
+          代码示例：
+          <pre>
+            .parent {
+              width: 200px;
+              height: 200px;
+
+              text-align: center;
+              line-height: 200px;
+            }
+
+            .child {
+              display: inline-block;
+              vertical-align: middle;
+              width: 100px;
+              height: 100px;
+            }
+          </pre>
+          演示：
+          <style>
+            .parent-5-2 {
+              width: 200px;
+              height: 200px;
+
+              text-align: center;
+              line-height: 200px;
+            }
+
+            .child-5-2 {
+              display: inline-block;
+              vertical-align: middle;
+              width: 100px;
+              height: 100px;
+            }
+          </style>
+          <div class="parent-5-2 width-200 bg-yellow">
+            <div class=" bg-red child-5-2"></div>
+          </div>
+          <hr>
+          <h4>5.2.2 vertacal-align 和 text-align 结合 --- 无固定高【借助辅助元素height:100%】</h4>
+          代码示例：
+          <pre>
+            .parent {
+              width: 200px;
+              height: 200px;
+
+              text-align: center;
+              line-height: 200px;
+            }
+
+            .child {
+              display: inline-block;
+              vertical-align: middle;
+              width: 100px;
+              height: 100px;
+            }
+            .assist{
+              display: inline-block;
+              vertical-align: middle;
+              height:100%;
+            }
+            /* 
+              这个方法需要添加一个辅助元素，
+              设置辅助元素height:100%;使当前行框盒子的高度撑满父元素，
+              然后设置vertical-align: 
+              middle;使其在垂直方向上居中对齐。
+            */
+          </pre>
+          演示：
+          <style>
+            .parent-5-2-2 {
+              width: 200px;
+              height: 200px;
+
+              text-align: center;
+            }
+
+            .child-5-2-2 {
+              display: inline-block;
+              vertical-align: middle;
+            }
+
+            .assist {
+              display: inline-block;
+              vertical-align: middle;
+              height: 100%;
+            }
+          </style>
+          <div class="parent-5-2-2 bg-yellow">
+            <div class="assist"></div>
+            <div class="width-100 bg-red child-5-2-2">元素居中的N种方法元素居中的N种方法元素居中的N种方法</div>
+          </div>
+        </div>
+
+        <hr>
+        <h3>5.3 flex</h3>
+
+        代码示例：
+        <pre>
+          .parent {
+            display: flex;
+            /* 主轴、交叉轴对齐方式都为居中对 */
+            align-items: center;
+            justify-content: center;
+            /* 父级需要大于子级的高度 垂直居中才有意义 */
+          }
+        </pre>
+        演示：
+        <style>
+          .parent-5-3 {
+            display: flex;
+            /* 主轴、交叉轴对齐方式都为居中对 */
+            align-items: center;
+            justify-content: center;
+
+            height: 300px;
+          }
+        </style>
+        <div class="parent-5-3  bg-yellow">
+          <div class="width-100 bg-red child-5-3">元素居中的N种方法元素居中的N种方法元素居中的N种方法</div>
+        </div>
+
+      </div>
+    </div>
+
+
+  </div>
+
+</body>
+
+</html>

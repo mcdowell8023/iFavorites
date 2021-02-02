@@ -1,8 +1,8 @@
 /*
  * @Author: mcdowell
- * @Date: 2019-09-16 20:12:32
+ * @Date: 2020-05-20 19:16:23
  * @LastEditors: mcdowell
- * @LastEditTime: 2020-05-27 13:28:54
+ * @LastEditTime: 2020-10-19 11:59:14
  */
 
 /**
@@ -499,3 +499,183 @@ export const toThousands = (num) => {
 export const formatMoney = (num, formatStr = '0,0.00') =>
   // eslint-disable-next-line no-restricted-globals
   !isNaN(parseFloat(num)) ? numeral(num).format(formatStr) : '--'
+
+/**
+ * @description: sleep 睡眠函数
+ * @param {type} timer ms
+ * @return {type} promise
+ * 使用示例： 需要借助额 async 与 await 关键字
+ *  (async ()=>{ console.log(111); await sleep(1000); console.log(222);})()
+ */
+
+function sleep(timer) {
+  return new Promise((reslove) => {
+    setTimeout(reslove, timer)
+  })
+}
+
+var arr = [[1, 2, 3], [6, [11, 12, [12, 14]], 7, 8, 9], 10, 4, [5, 6, 7, 8, 5]]
+// 拉平 数组 同时去重
+function flat(arr) {
+  // let list = []
+  let listJosn = {} // 这种 性能 去重 性能好
+  function flatFind(arr) {
+    for (let item of arr) {
+      if (Array.isArray(item)) {
+        flatFind(item)
+      } else {
+        if (!listJosn[item]) {
+          // list.push(item)
+          listJosn[item] = true
+        }
+      }
+    }
+  }
+  flatFind(arr)
+  return Object.keys(listJosn)
+}
+
+// 插入排序
+function sortArr(arr) {
+  for (var i = 1; i < arr.length; i++) {
+    for (var j = i - 1; j >= 0; j--) {
+      /*
+       * 当已排序部分的当前元素大于value，
+       * 就将当前元素向后移一位，再将前一位与value比较
+       */
+      if (arr[j + 1] < arr[j]) {
+        var temp = arr[j]
+        arr[j] = arr[j + 1]
+        arr[j + 1] = temp
+      }
+    }
+  }
+  return arr
+}
+console.log(sortArr([9, 3, 6, 4, 2, 1]))
+// 冒泡 排序
+function bubbleSort(arr) {
+  for (var i = 0; i < arr.length; i++) {
+    for (var j = 0; j < arr.length - i - 1; j++) {
+      if (arr[j] > arr[j + 1]) {
+        //相邻元素两两对比
+        var temp = arr[j] // 进行 交换
+        arr[j] = arr[j + 1]
+        arr[j + 1] = temp
+      }
+    }
+  }
+  return arr
+}
+console.log(bubbleSort([9, 3, 6, 4, 2, 1]))
+
+/*
+ ***
+ ****
+ *****
+ ****** 分
+ ******* 割 *********** 闭包 **********
+ ****** 线
+ *****
+ ****
+ ***
+ */
+// 自函数 访问父函数变量， 因为 变量仍然被使用， 无法被回收
+// 常见必报示例
+function test() {
+  var a = 0
+  return function (params) {
+    return a++
+  }
+}
+var foo = test()
+console.log(foo(), 1)
+console.log(foo(), 2)
+// 必包传值
+;(function (i) {})(i)
+
+/*
+ ***
+ ****
+ *****
+ ****** 分
+ ******* 割 ********** 继承 *************
+ ****** 线
+ *****
+ ****
+ ***
+ */
+
+// 组合继承
+function Parent(name, age) {
+  this.name = name
+  this.age = age
+}
+Parent.prototype = {
+  hair: 'black',
+  color: 'yellow',
+  getValue: function () {
+    console.log(this)
+  },
+}
+function Child(name, age) {
+  Parent.call(this, name, age)
+}
+Child.prototype = new Parent()
+const child1 = new Child('小李', 22)
+
+child1.getValue() // 1
+child1 instanceof Parent // true
+
+// 寄生组合继承 借助 Object.create
+function Parent(name, age) {
+  this.name = name
+  this.age = age
+}
+
+Parent.prototype = {
+  hair: 'black',
+  color: 'yellow',
+  getValue: function () {
+    console.log(this)
+  },
+}
+
+function Child(...arg) {
+  Parent.call(this, arg)
+}
+Child.prototype = Object.create(Parent.prototype, {
+  // 修正 丢失 构造函数 的位置
+  constructor: {
+    value: Child,
+    enumerable: false,
+    writable: true,
+    configurable: true,
+  },
+})
+const Childer = new Child('小李', 22)
+
+Childer.getValue()
+Childer instanceof Parent
+Childer.constructor
+
+// class 继承
+class Parent {
+  constructor(name, age) {
+    this.name = name
+    this.age = age
+  }
+  getValue() {
+    console.log(this)
+  }
+}
+class Child extends Parent {
+  constructor(name, age) {
+    // Parent.call(this, value)
+    super(name, age)
+  }
+}
+const Childer = new Child('小李', 22)
+Childer.getValue()
+Childer instanceof Parent
+Childer.constructor

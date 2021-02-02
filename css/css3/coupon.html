@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>优惠券</title>
+</head>
+
+<body>
+  <div>
+
+    <div class="pb10 pt10 clearfix coupon-list">
+      <div class="coupon-wrapper">
+        <div class="coupon-content">
+          <div class="money"><span>¥</span>20</div>
+          <div class="description">
+            满100元 可用
+          </div>
+          <div class="date">
+            2020.10.01 -
+            2020.10.30
+          </div>
+        </div>
+        <div class="split-line"></div>
+        <div class="tip">
+
+          <div class="conditions">
+            <span>限类型：</span>全平台
+          </div>
+          <div class="conditions">
+            <span>卷类型：</span>满减券
+          </div>
+          <div class="conditions"><span>卷码：</span>12sdf213</div>
+          <div class="conditions"><span>备注：</span></div>
+
+        </div>
+      </div>
+    </div>
+
+
+
+    <style>
+      .coupon-wrapper {
+        width: 268px;
+        overflow: hidden;
+        position: relative;
+        background: #f9f9f9;
+        margin-bottom: 15px;
+        margin-right: 14px;
+        float: left;
+      }
+
+      .coupon-wrapper::after {
+        content: "";
+        display: block;
+        background: #ffff;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        position: absolute;
+        left: 50%;
+        margin-left: -20px;
+        top: -25px;
+      }
+
+      .coupon-content {
+        padding-top: 30px;
+        text-align: center;
+        background: #73d2d4;
+      }
+
+      .money {
+        height: 60px;
+        font-size: 50px;
+        color: #fff;
+        font-weight: 900;
+        line-height: 60px;
+      }
+
+      .money span {
+        padding: 5px;
+        font-size: 30px;
+        font-weight: 100;
+        position: relative;
+        top: -2px;
+      }
+
+      .description {
+        color: #fff;
+        padding-bottom: 10px;
+      }
+
+      .date {
+        padding: 10px;
+        color: #187f81;
+        font-size: 14px;
+      }
+
+
+
+      /* 此处重点 */
+      .split-line {
+        padding: 2px;
+        background-image: radial-gradient(transparent 0,
+            transparent 5px,
+            #73d2d4 5px);
+        background-size: 15px 15px;
+        background-position: 8px -2px;
+      }
+
+
+      .tip {
+        padding: 15px;
+        font-size: 14px;
+
+
+      }
+
+      .conditions {
+        padding: 3px;
+        color: #aaaaaa;
+      }
+
+      .conditions span {
+        color: #6a6a6a;
+      }
+    </style>
+  </div>
+</body>
+
+</html>
