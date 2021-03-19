@@ -2,7 +2,7 @@
  * @Author: mcdowell
  * @Date: 2021-02-02 11:17:20
  * @LastEditors: mcdowell
- * @LastEditTime: 2021-02-02 17:16:09
+ * @LastEditTime: 2021-03-19 18:38:02
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -236,6 +236,61 @@
         </style>
         <div class="parent-3  bg-yellow">
           <div class=" bg-red child-3">元素居中的N种方法元素居中的N种方法元素居中的N种方法元素居中的N种方法元素居中的N种方法</div>
+        </div>
+      </div>
+
+      <h2>3.1 块元素水平居中（奇技淫巧）</h2>
+      <div class="h3-box">
+        代码示例：
+        <pre>
+          .outer{
+            /* 这里用作清除浮动 */
+            overflow: hidden;
+          }
+          .wrap{
+            float: left;
+            left: 50%;
+            /* 为子元素 定位提供据点 */
+            position: relative;
+          }
+          .inner{
+            position: relative;
+            left: -50%;
+          }
+          /*
+          .wrap 左浮动50%，相当于它的 左边位于 .out 的 中线
+          .inner 左浮动-50%，就相当于以.out的中线为基准左移一般，于是就居中了
+          .inner 里的position: relative，就是为了 让 .inner 以 .wrap 为基准左移而不是 .out 
+
+          关于这个方法，最大优点就是可以不关注 宽度问题，效果类似  text-align: center;和 display:inline-block;
+          */
+        </pre>
+        演示：
+        <style>
+          .outer {
+            /* 这里用作清除浮动 */
+            overflow: hidden;
+          }
+
+          .wrap {
+            float: left;
+            left: 50%;
+            /* 为子元素 定位提供据点 */
+            position: relative;
+          }
+
+          .inner {
+            position: relative;
+            left: -50%;
+          }
+        </style>
+
+        <div class="outer bg-blue">
+          <div class="wrap bg-yellow">
+            <div class="inner bg-red" style="height:100px;width:400px;">
+              元素居中的N种方法元素居中的N种方法元素居中的N种方法元素居中的N种方法元素居中的N种方法
+            </div>
+          </div>
         </div>
       </div>
     </div>
