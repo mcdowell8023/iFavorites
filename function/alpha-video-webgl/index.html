@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>透明视频</title>
+    <style>
+        .canvas {
+            width: 414px;
+            height: 896px;
+        }
+    </style>
+</head>
+
+<body style="background-color: black;">
+    <canvas class="canvas" id="AlphaVideoCanvas" width="414" height="896"></canvas>
+    <script src="./alpha-video-webgl.js" inline></script>
+    <script>
+      // 动画视频 在左侧
+      const url_left = `https://s3.amazonaws.com/liveme.storage.test/liveglb/202004171204/gifts/resource_manage/f8d6b_md5_f71ec37a5350a219500fef89335c3be9_.mp4`
+      // 动画视频 在右侧
+      const url_right =  `https://dlied5sdk.myapp.com/music/release/upload/t_mm_file_publish/2868412.mp4`;
+        this.headMv = new AlphaVideo({
+            src: url_left,
+            width: 414,
+            height: 896 * 375/400,
+            loop: true, // 是否循环播放
+            canvas: document.getElementById('AlphaVideoCanvas'),
+            // direction: "right", // 动画视频的播放方向，left:原来视频在左侧 ；right: 原视频在右侧
+        });
+        this.headMv.play();
+    </script>
+</body>
+
+</html>
