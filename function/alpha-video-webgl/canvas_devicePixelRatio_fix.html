@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>canvas-更正分辨率</title>
+</head>
+<body>
+  <!-- canvas -->
+   <canvas id="glcanvas" width="500" height="500">
+      你的浏览器不支持canvas，请更新你的浏览器!
+    </canvas>
+    <script>
+      const canvas = document.getElementById('glcanvas');
+      const ctx = canvas.getContext('2d');
+
+      const size = 500;
+      // 在视网膜屏幕上 如果是 1，整体回非常模糊，所以需要 window.devicePixelRatio [ 设备的物理像素分辨率 与 CSS像素分辨率之比 ]
+      // 1. 获取 设备的物理像素分辨率 与 CSS像素分辨率之比
+      const radio = window.devicePixelRatio || 1;
+      // 2. canvas 设置 实际物理像素 尺寸 px
+      canvas.style.width = size+"px";
+      canvas.style.height = size+"px";
+      // 3. 设置canvas 画布实际尺寸 （缩放以考虑额外的像素密度）。
+      canvas.width = size * radio;
+      canvas.height = size * radio;
+      // 4. 把画布 放大 以适应 css 的 px
+      ctx.scale(radio, radio);
+
+
+      ctx.font = "20px Arial";
+      ctx.fillText("Hello world "+ radio, 10, 50);
+      ctx.fillStyle = "red";
+    </script>
+</body>
+</html>
