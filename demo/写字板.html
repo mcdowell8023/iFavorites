@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+<title>手写板</title>
+<style>
+  *{
+      margin:0;
+      padding:0;
+  }
+  html,body{
+    height: 100%;
+    overflow: hidden;
+  }
+  .writeboard{
+    width: 300px;
+    font-size: 14px;
+  }
+  .writeboard.mobi{
+    position: fixed;
+    z-index: 999999;
+    background-color: #fff;
+    left: 0;
+    top: 0;
+  }
+  .writeboard .writeboard-box{
+    position: relative;
+    width: 300px;
+    height: 200px;
+  }
+  .writeboard .writeboard-box .writeboard-box-canvas{
+    background-color: #ddd;
+    width: 300px;
+    height: 200px;
+  }
+  .writeboard .writeboard-box-img{
+    width: 300px;
+    height: 200px;
+  }
+  .writeboard-btn{
+    height: 20px;
+    margin-top: 10px;
+  }
+  .writeboard-btn span{
+    margin-right: 20px;
+  }
+  .writeboard-btn span:hover{
+    text-decoration: underline;
+  }
+  .writeboard-color {
+    height: 20px;
+    margin-top: 10px;
+  }
+  .writeboard-color-black{
+    display: inline-block;
+    vertical-align: top;
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+    background-color: #000000;
+  }
+  .writeboard-color-blue{
+    display: inline-block;
+    vertical-align: top;
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+    background-color: #0000FF;    
+  }
+  .writeboard-color-red{
+    display: inline-block;
+    vertical-align: top;
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+    background-color: #FF0000;   
+  }
+  .writeboard-xy{
+    height: 20px;
+    margin-top: 10px;
+  }
+  .writeboard-devi{
+    height: 20px;
+    margin-top: 10px;
+    color: green;
+  }
+  .writeboard-linewidth{
+    height: 18px;
+    line-height: 18px;
+    vertical-align: top;
+    width: 40px;
+  }
+</style>
+</head>
+<body>
+  <div class="writeboard" id="writeboard">
+      <div class="writeboard-box">
+        <canvas class="writeboard-box-canvas" id="canvas"></canvas>
+      </div> 
+      <div class="writeboard-devi">
+        <span id="devi">适配样式：PC（点我切换）</span>
+      </div>
+      <div class="writeboard-color">
+        <span>选择颜色：</span>
+        <span class="writeboard-color-black" id="colorInput1" clor="#000000"></span>
+        <span class="writeboard-color-blue"id="colorInput2" clor="#0000FF"></span>
+        <span class="writeboard-color-red"id="colorInput3" clor="#FF0000"></span>
+        <span>画笔宽度：</span>
+        <select class="writeboard-linewidth" name="setLineWidth" id="setLineWidth">
+          <option value="5" selected>5</option>
+          <option value="10">10</option>
+          <option value="1">1</option>
+        </select>
+      </div>
+      <div class="writeboard-btn">
+        <span id="clear">清 空</span>
+        <span id="goBack">回 退</span>
+        <span id="repeatPlay">回 放</span>
+        <span id="getImg">生成图片</span>
+      </div>
+      <div class="writeboard-xy">
+        <span>事件坐标：</span>
+        <span id="xy"></span>
+      </div>
+      <div class="writeboard-box-img">
+        <img src="" id="imgUrlEle" alt="" />
+      </div>
+  </div>   
+</body>    
+<script>
+  window.onload = function() {
+    // start
+    // canvas id
+    const canvasId = 'canvas';
+    // 获取canvas
+    const canvas = document.getElementById(canvasId);
+    // 事件坐标
+    const xy = document.getElementById('xy');
+    // 适配切换
+    const devi = document.getElementById('devi');
+    const writeboard = document.getElementById('writeboard');
+    devi.onclick = function() {
+      if (writeboard.className === 'writeboard') {
+        writeboard.className = 'writeboard mobi';
+        devi.innerHTML = '适配样式：MOBI（点我切换）';
+      } else {
+        writeboard.className = 'writeboard';
+        devi.innerHTML = '适配样式：PC（点我切换）';
+      };
+    };
+    // 设置宽高属性
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    // canvas追加2d画图
+    const context = canvas.getContext('2d');
+    // 清除画布
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    // 线条两端样式
+    context.lineCap = 'round';
+    context.lineJoin = 'round';
+    // 线条颜色
+    var lineColor = '#000000';
+    // 线条模糊 避免小锯齿
+    context.shadowBlur = 1;
+    // 线条宽度
+    var lineWidth = 5;
+    // 全局存储器
+    var eventDownFlag = 0;  // 事件标志 1 按下
+    var lineArr = [ // 坐标容器 1到下一个1之前的0表示一条绘制线
+      // x: 0, // 横坐标
+      // y: 0, // 纵坐标
+      // state: 0, // 是否是起点坐标 1 起点坐标 0 移动坐标
+      // time: 0, // 坐标时间戳
+      // color: 0, // 颜色
+      // lineWidth: 0 // 线条宽度
+    ];
+    // 元素事件监听
+    // 按下事件
+    canvas.addEventListener('mousedown', onCanvasMouseDown, false);
+    // 移动事件
+    document.documentElement.addEventListener('mousemove', onDocMouseMove, false);
+    // 抬起事件
+    document.documentElement.addEventListener('mouseup', onDocMousUp, false);
+    // 按下事件
+    canvas.addEventListener('touchstart', onCanvasMouseDown, { passive: false });
+    // 移动事件
+    document.documentElement.addEventListener('touchmove', onDocMouseMove, { passive: false });
+    // 抬起事件
+    document.documentElement.addEventListener('touchend', onDocMousUp, { passive: false });
+    // 事件方法
+    function onCanvasMouseDown(evt) {
+      // 阻止事件默认行为
+      evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
+      // 回放定时器
+      if (setTimeStroke) {
+        console.log('回放中');
+        return false;
+      };
+      // 坐标信息
+      let x = evt.type === "touchstart" ? evt.changedTouches[0].pageX - canvas.getBoundingClientRect().left - (document.documentElement.scrollLeft || document.body.scrollLeft) : evt.layerX;
+      let y = evt.type === "touchstart" ? evt.changedTouches[0].pageY - canvas.getBoundingClientRect().top- (document.documentElement.scrollTop || document.body.scrollTop) : evt.layerY;
+      // 事件坐标
+      xy.innerHTML = 'eventX：' + x + ' - eventY：' + y;
+      // 时间戳
+      let time = new Date().getTime();
+      // 事件标志 1 按下
+      eventDownFlag = 1;
+      context.beginPath(); // 开始绘制路径 清空方法避免回显
+      // 线条模糊 避免小锯齿
+      context.shadowColor = lineColor;
+      // 线条颜色 注意和模糊值一样
+      context.strokeStyle = lineColor;
+      // 线条宽度
+      context.lineWidth = lineWidth;
+      context.moveTo(x, y);  // 绘制路径的起始点坐标
+      context.stroke(); // 绘制
+      // 坐标容器
+      lineArr.push({
+        x,
+        y,
+        state: 1,
+        time,
+        color: lineColor,
+        lineWidth: lineWidth
+      });
+    };
+    function onDocMouseMove(evt) {
+      // 按下后写字板元素上移动
+      if (eventDownFlag === 1) {
+        if (evt.target.tagName === "CANVAS" && evt.target.id === canvasId) {
+          // 阻止事件默认行为
+          evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
+          // 坐标信息
+          let x = evt.type === "touchmove" ? evt.changedTouches[0].pageX - canvas.getBoundingClientRect().left - (document.documentElement.scrollLeft || document.body.scrollLeft) : evt.layerX;
+          let y = evt.type === "touchmove" ? evt.changedTouches[0].pageY - canvas.getBoundingClientRect().top- (document.documentElement.scrollTop || document.body.scrollTop) : evt.layerY;
+          // 事件坐标
+          xy.innerHTML = 'eventX：' + x + ' - eventY：' + y;
+          // 时间戳
+          let time = new Date().getTime();
+          context.lineTo(x, y);  // 绘制路径的连接点坐标
+          context.stroke(); // 绘制
+          // 坐标容器
+          lineArr.push({
+            x,
+            y,
+            state: 0,
+            time,
+            color: ''
+          });
+        } else {
+          // 事件标志 1 按下
+          eventDownFlag = 2;
+        };
+      };
+      // 从写字板元素移出又移入
+      if (eventDownFlag === 2) {
+        if (evt.target.tagName === "CANVAS" && evt.target.id === canvasId) {
+          // 阻止事件默认行为
+          evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
+          // 坐标信息
+          let x = evt.type === "touchmove" ? evt.changedTouches[0].pageX - canvas.getBoundingClientRect().left - (document.documentElement.scrollLeft || document.body.scrollLeft) : evt.layerX;
+          let y = evt.type === "touchmove" ? evt.changedTouches[0].pageY - canvas.getBoundingClientRect().top- (document.documentElement.scrollTop || document.body.scrollTop) : evt.layerY;
+          // 事件坐标
+          xy.innerHTML = 'eventX：' + x + ' - eventY：' + y;
+          // 时间戳
+          let time = new Date().getTime();
+          context.beginPath(); // 开始绘制路径 清空方法避免回显
+          // 线条模糊 避免小锯齿
+          context.shadowColor = lineColor;
+          // 线条颜色 注意和模糊值一样
+          context.strokeStyle = lineColor;
+          // 线条宽度
+          context.lineWidth = lineWidth;
+          context.moveTo(x, y);  // 绘制路径的连接点坐标
+          context.stroke(); // 绘制
+          // 坐标容器
+          lineArr.push({
+            x,
+            y,
+            state: 2,
+            time,
+            color: lineColor,
+            lineWidth: lineWidth
+          });
+          // 事件标志 1 按下
+          eventDownFlag = 1;
+        };
+      };
+    };
+    function onDocMousUp(evt) {
+      if (eventDownFlag === 1) {
+        if (evt.target.tagName === "CANVAS" && evt.target.id === canvasId) {
+          // 阻止事件默认行为
+          evt.preventDefault ? evt.preventDefault() : evt.returnValue = false;
+          // 坐标信息
+          let x = evt.type === "touchend" ? evt.changedTouches[0].pageX - canvas.getBoundingClientRect().left - (document.documentElement.scrollLeft || document.body.scrollLeft) : evt.layerX;
+          let y = evt.type === "touchend" ? evt.changedTouches[0].pageY - canvas.getBoundingClientRect().top- (document.documentElement.scrollTop || document.body.scrollTop) : evt.layerY;
+          // 事件坐标
+          xy.innerHTML = 'eventX：' + x + ' - eventY：' + y;
+          // 时间戳
+          let time = new Date().getTime();
+          context.lineTo(x, y);  // 绘制路径的连接点坐标
+          context.stroke(); // 绘制
+          // 坐标容器
+          lineArr.push({
+            x,
+            y,
+            state: 0,
+            time,
+            color: ''
+          });
+        };
+        // 事件标志 1 按下
+        eventDownFlag = 0;
+      };
+      if (eventDownFlag === 2) {
+        // 事件标志 1 按下
+        eventDownFlag = 0;
+      };
+    };
+    // 回放
+    const repeatPlay = document.getElementById('repeatPlay');
+    repeatPlay.addEventListener('click', onRepeatPlay, false);
+    // 回放定时器
+    var setTimeStroke = null;
+    function onRepeatPlay() {
+      // 如果在回放中，清除定时器操作
+      clearTimeout(setTimeStroke);
+      // 清除画布
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      // 递归回放
+      function dgFun(lineIndex) {
+        if (lineIndex < lineArr.length) {
+          if (lineArr[lineIndex].state === 1) {
+            context.beginPath(); // 开始绘制路径 清空方法避免回显
+            // 线条模糊 避免小锯齿
+            context.shadowColor = lineArr[lineIndex].color;
+            // 线条颜色 注意和模糊值一样
+            context.strokeStyle = lineArr[lineIndex].color;
+            // 线条宽度
+            context.lineWidth = lineArr[lineIndex].lineWidth;
+            context.moveTo(lineArr[lineIndex].x, lineArr[lineIndex].y);  // 绘制路径的连接点坐标
+            context.stroke(); // 绘制
+          } else if (lineArr[lineIndex].state === 2) {
+            context.beginPath(); // 开始绘制路径 清空方法避免回显
+            // 线条模糊 避免小锯齿
+            context.shadowColor = lineArr[lineIndex].color;
+            // 线条颜色 注意和模糊值一样
+            context.strokeStyle = lineArr[lineIndex].color;
+            // 线条宽度
+            context.lineWidth = lineArr[lineIndex].lineWidth;
+            context.moveTo(lineArr[lineIndex].x, lineArr[lineIndex].y);  // 绘制路径的连接点坐标
+            context.stroke(); // 绘制
+          } else {
+            context.lineTo(lineArr[lineIndex].x, lineArr[lineIndex].y);  // 绘制路径的连接点坐标
+            context.stroke(); // 绘制
+          };
+          // 定时器
+          if ((lineIndex + 1) in lineArr) {
+            setTimeStroke = setTimeout(function() {
+              dgFun(lineIndex + 1)
+            }, lineArr[lineIndex + 1].time - lineArr[lineIndex].time);
+          } else {
+            setTimeStroke = null;
+          };
+        } else {
+          setTimeStroke = null;
+        };
+      };
+      dgFun(0);
+    };
+    // 清空
+    const clear = document.getElementById('clear');
+    clear.addEventListener('click', onClear, false);
+    function onClear() {
+      // 回放定时器
+      if (setTimeStroke) {
+        console.log('回放中');
+        return false;
+      };
+      // 清除画布
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      // 坐标容器
+      lineArr = [];      
+    };
+    // 回退
+    const goBack = document.getElementById('goBack');
+    goBack.addEventListener('click', onGoBack, false);
+    function onGoBack() {
+      // 回放定时器
+      if (setTimeStroke) {
+        console.log('回放中');
+        return false;
+      };
+      // 倒叙获取坐标容器 state === 1 这一段移除
+      let lastIndex = 0;
+      for (let i = lineArr.length - 1; i >= 0; i -= 1) {
+        if (lineArr[i].state === 1) {
+          lastIndex = i;
+          break;
+        };
+      };
+      // 清除画布
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      // 坐标容器
+      lineArr = lineArr.slice(0, lastIndex);
+      // 绘制更新
+      for (let i = 0; i < lineArr.length; i += 1) {
+        if (lineArr[i].state === 1) {
+          context.beginPath(); // 开始绘制路径 清空方法避免回显
+          // 线条模糊 避免小锯齿
+          context.shadowColor = lineArr[i].color;
+          // 线条颜色 注意和模糊值一样
+          context.strokeStyle = lineArr[i].color;
+          // 线条宽度
+          context.lineWidth = lineArr[i].lineWidth;
+          context.moveTo(lineArr[i].x, lineArr[i].y);  // 绘制路径的连接点坐标
+          context.stroke(); // 绘制
+        } else if (lineArr[i].state === 2) {
+          context.beginPath(); // 开始绘制路径 清空方法避免回显
+          // 线条模糊 避免小锯齿
+          context.shadowColor = lineArr[i].color;
+          // 线条颜色 注意和模糊值一样
+          context.strokeStyle = lineArr[i].color;
+          // 线条宽度
+          context.lineWidth = lineArr[i].lineWidth;
+          context.moveTo(lineArr[i].x, lineArr[i].y);  // 绘制路径的连接点坐标
+          context.stroke(); // 绘制
+        } else {
+          context.lineTo(lineArr[i].x, lineArr[i].y);  // 绘制路径的连接点坐标
+          context.stroke(); // 绘制
+        };
+      };
+    };
+    // 生成图片
+    const getImg = document.getElementById('getImg');
+    getImg.addEventListener('click', onGetImg, false);
+    function onGetImg() {
+      const imgUrl = canvas.toDataURL("image/png"); // 获取canvas转为指定格式图片的路径
+      const imgUrlEle = document.getElementById('imgUrlEle');
+      imgUrlEle.src = imgUrl;
+    };
+    // 设置颜色
+    const colorInput1 = document.getElementById('colorInput1');
+    const colorInput2 = document.getElementById('colorInput2');
+    const colorInput3 = document.getElementById('colorInput3');
+    colorInput1.addEventListener('click', onColorInput, false);
+    colorInput2.addEventListener('click', onColorInput, false);
+    colorInput3.addEventListener('click', onColorInput, false);
+    function onColorInput(evt) {
+      // console.log(evt.target.getAttribute('clor'));
+      lineColor = evt.target.getAttribute('clor');
+    };
+    // 设置线条宽度
+    const setLineWidth = document.getElementById('setLineWidth');
+    setLineWidth.addEventListener('change', onSetLineWidth, false);
+    function onSetLineWidth(evt) {
+      // console.log(evt.target.value);
+      lineWidth = evt.target.value;
+    };
+    // end 
+  };
+</script>
+</html>
